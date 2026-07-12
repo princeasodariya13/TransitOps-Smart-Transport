@@ -1,4 +1,6 @@
 # 🚛 FleetFlow
+**Live demo**
+- Live vercel demo: https://transit-ops-smart-transport.vercel.app/
 
 **Enterprise-Grade SaaS Fleet Management System**
 
@@ -108,7 +110,7 @@ npm install
 
 Create a `.env` file in the `fleet-flow-frontend` root:
 ```env
-VITE_API_URL=http://localhost:5000/api
+VITE_API_URL=https://transitops-smart-transport.onrender.com/api
 ```
 
 ### 4. Run the Application
