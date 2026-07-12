@@ -1,0 +1,198 @@
+// ============================================================
+//  FleetFlow — Prisma Schema (MongoDB) — Prisma v7
+//  NOTE: datasource URL is configured in prisma.config.ts
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+//  ENUMS
+// ─────────────────────────────────────────────
+
+enum Role {
+  ADMIN
+  FLEET_MANAGER
+  DISPATCHER
+  SAFETY_OFFICER
+  FINANCIAL_ANALYST
+}
+
+enum VehicleType {
+  TRUCK
+  VAN
+  BIKE
+}
+
+enum VehicleStatus {
+  AVAILABLE
+  ON_TRIP
+  IN_SHOP
+  RETIRED
+}
+
+enum DriverStatus {
+  ON_DUTY
+  OFF_DUTY
+  SUSPENDED
+  ON_TRIP
+}
+
+enum TripStatus {
+  DRAFT
+  DISPATCHED
+  COMPLETED
+  CANCELLED
+}
+
+enum ExpenseCategory {
+  TOLL
+  PARKING
+  FINE
+  OTHER
+}
+
+// ─────────────────────────────────────────────
+//  MODELS
+// ─────────────────────────────────────────────
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  password  String
+  name      String
+  role      Role
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("User")
+}
+
+model Vehicle {
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  uid             String?       @unique
+  name            String
+  licensePlate    String        @unique
+  type            VehicleType
+  maxCapacity     Float
+  odometer        Float
+  acquisitionCost Float
+  status          VehicleStatus @default(AVAILABLE)
+  deletedAt       DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  trips        Trip[]
+  maintenances Maintenance[]
+  fuelLogs     FuelLog[]
+  expenses     Expense[]
+
+  @@index([status])
+  @@index([deletedAt])
+  @@map("Vehicle")
+}
+
+model Driver {
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  uid           String?      @unique
+  name          String
+  licenseNumber String       @unique
+  licenseExpiry DateTime
+  category      String
+  status        DriverStatus @default(OFF_DUTY)
+  safetyScore   Float        @default(100.0)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  trips Trip[]
+
+  @@map("Driver")
+}
+
+model Trip {
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
+  uid           String?    @unique
+  vehicleId     String     @db.ObjectId
+  driverId      String     @db.ObjectId
+  startOdometer Float
+  endOdometer   Float?
+  revenue       Float      @default(0.0)
+  cargoWeight   Float
+  status        TripStatus @default(DRAFT)
+  origin        String?
+  destination   String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  vehicle  Vehicle   @relation(fields: [vehicleId], references: [id])
+  driver   Driver    @relation(fields: [driverId], references: [id])
+  fuelLogs FuelLog[]
+  expenses Expense[]
+
+  @@index([status])
+  @@index([vehicleId])
+  @@index([driverId])
+  @@map("Trip")
+}
+
+model Maintenance {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  uid         String?  @unique
+  vehicleId   String   @db.ObjectId
+  description String
+  cost        Float
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id])
+
+  @@map("Maintenance")
+}
+
+model FuelLog {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  uid       String?  @unique
+  vehicleId String   @db.ObjectId
+  tripId    String?  @db.ObjectId
+  liters    Float
+  cost      Float
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id])
+  trip    Trip?   @relation(fields: [tripId], references: [id])
+
+  @@index([vehicleId])
+  @@index([tripId])
+  @@index([date])
+  @@map("FuelLog")
+}
+
+model Expense {
+  id          String          @id @default(auto()) @map("_id") @db.ObjectId
+  uid         String?         @unique
+  vehicleId   String          @db.ObjectId
+  tripId      String?         @db.ObjectId
+  category    ExpenseCategory
+  description String?
+  cost        Float
+  date        DateTime        @default(now())
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id])
+  trip    Trip?   @relation(fields: [tripId], references: [id])
+
+  @@index([vehicleId])
+  @@index([tripId])
+  @@index([date])
+  @@map("Expense")
+}

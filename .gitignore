@@ -1,0 +1,71 @@
+# -------------------------------------------------------------------
+# Dependency directories
+# -------------------------------------------------------------------
+node_modules/
+jspm_packages/
+.pnp
+.pnp.js
+
+# -------------------------------------------------------------------
+# Environment & Secrets (NEVER COMMIT THESE)
+# -------------------------------------------------------------------
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.pem
+
+# -------------------------------------------------------------------
+# Build & Compiled Output
+# -------------------------------------------------------------------
+dist/
+build/
+out/
+dist-ssr
+*.tsbuildinfo
+.next/
+*.gz
+
+# -------------------------------------------------------------------
+# Logs & Databases
+# -------------------------------------------------------------------
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.sqlite
+*.sqlite3
+
+# -------------------------------------------------------------------
+# OS / Editor / IDE specific files
+# -------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.eslintcache
+.vite/
+
+# -------------------------------------------------------------------
+# Miscellaneous
+# -------------------------------------------------------------------
+coverage/
+.nyc_output/
+*.pid
+*.seed
+*.pid.lock
+npm-vdebug.log*
