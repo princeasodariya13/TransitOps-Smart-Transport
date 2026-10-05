@@ -36,7 +36,11 @@ const Register = () => {
                 navigate('/dashboard');
             }
         } catch (err) {
-            setError(err.response?.data?.error || 'Failed to register');
+            const errData = err.response?.data?.error;
+            const msg = typeof errData === 'string' 
+                ? errData 
+                : (Array.isArray(errData) ? errData.map(e => e.message || e).join(', ') : 'Failed to register');
+            setError(msg);
         } finally {
             setLoading(false);
         }

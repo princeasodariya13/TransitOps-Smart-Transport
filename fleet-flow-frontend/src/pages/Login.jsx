@@ -25,7 +25,11 @@ const Login = () => {
                 navigate('/dashboard');
             }
         } catch (err) {
-            setError(err.response?.data?.error || 'Failed to login');
+            const errData = err.response?.data?.error;
+            const msg = typeof errData === 'string' 
+                ? errData 
+                : (Array.isArray(errData) ? errData.map(e => e.message || e).join(', ') : 'Failed to login');
+            setError(msg);
         } finally {
             setLoading(false);
         }
