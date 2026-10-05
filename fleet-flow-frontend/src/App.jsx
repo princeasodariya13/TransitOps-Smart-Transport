@@ -15,10 +15,14 @@ import LandingPage from './pages/Landing/LandingPage';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ProtectedRoute from './components/ProtectedRoute';
+import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 function App() {
   return (
     <AuthProvider>
+      <VercelAnalytics />
+      <SpeedInsights />
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
       <BrowserRouter suppressHydrationWarning>
         <Routes>
